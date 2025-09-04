@@ -2,6 +2,6 @@ CC=gcc
 PWD = $(shell pwd)
 
 all:
-	$(CC) -Wall $(PWD)/*.c `pkg-config --cflags --libs sdl2` -lm -lSDL2_ttf -o game
+	$(CC) -Wall $(PWD)/main.c `pkg-config --cflags --libs sdl2` -ggdb -lSDL2_ttf -lm -pthread -o game
 
 
