@@ -5,9 +5,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
-//#include "game.h"
-#include <math.h>
-#include <pthread.h>
 
 #define SCR_W 600
 #define SCR_H 600
@@ -17,7 +14,6 @@ int x, y, f_size;
 
 SDL_Window* window = NULL;
 SDL_Renderer* rend  = NULL;
-
 
 SDL_Rect cells[16];
 
@@ -67,49 +63,10 @@ void sdl_init(void)
     rend = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     secp(rend);    
 }
-int sgn(float num)
-{
-	if (num > 0) return 1;
-	else if (num < 0) return -1;
-	else return 0;
-}
-void draw_super_ellipse(float a, float b, float n, float xoffset, float yoffset)
-{
-    int val = 63;
-    SDL_FPoint points[val];
-   
-    int counter = 0;
-    for (float angle = 0.0f; angle < M_PI*2 && counter < val; angle+=0.1)
-    {
-	
-	float na = 2.0f/n;
-	float x = powf(fabs(cosf(angle)), na)*a*sgn(cosf(angle)) + xoffset;
-	float y = powf(fabs(sinf(angle)), na)*b*sgn(sinf(angle)) + yoffset; 
-	
-	SDL_FPoint pt = {x, y};
-	points[counter] = pt;
-	
-	counter++;
-	
-	SDL_FRect tmp = {x, y, 1.0f, 1.0f};
-	SDL_SetRenderDrawColor(rend, 212, 184, 124, 255);
-	SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
-	SDL_RenderFillRectF(rend, &tmp);
-	SDL_RenderDrawRectF(rend, &tmp);
-	
-    } 
-    SDL_RenderDrawPointsF(rend, points, 63);
-    
-}
-float sgn2(float x)
-{
-    return ((x>0)-(x<0))*1;
-}
 
 static void fill_field_matrix()
 {
     int all_iter = 16;
-    // int j = y+50;
     int j = y;
     int i = x-100;
     
@@ -131,15 +88,6 @@ static void fill_field_matrix()
    
 }
 
-// void dr_se()
-// {
-//     for (int i = 0; i < 16; i++)
-//     {
-//         draw_super_ellipse(50, 50, 10, cells[i].x+50, cells[i].y);
-//     }
-
-// }
-
 void init_field()
 {
     fill_field_matrix();
@@ -157,9 +105,6 @@ void init_field()
 
 	SDL_RenderDrawRect(rend, &cells[i]);
     }
-    
-//    dr_se();
-
 }
 
 int main(int argc, char* argv[])
@@ -180,10 +125,8 @@ int main(int argc, char* argv[])
 		    run = false;
 		   
 		    break;
-		}
-		
-	    }
-	    
+		}		
+	}
 	    SDL_RenderClear(rend);
 	    SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
 	    init_field();
