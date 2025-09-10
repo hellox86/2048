@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define FIELD_W 4
+#define FIELD_H 4
+
 int field[4][4];
-    
+
 int random_in_range(int min, int max)
 {
     int rand_index = min+rand()/(RAND_MAX/(max+min+1)+1);
@@ -12,7 +15,7 @@ int random_in_range(int min, int max)
 
 void probability(int f[4][4], int times)
 {
-    int output = 2;    
+    int output = 2;   
     int rand_col, rand_row, rand_index;
     for (int i = 0; i < times; i++)
     {	
@@ -40,44 +43,45 @@ struct Pos
     int x, y;
 };
 
-struct Pos life_cells[16];
-
-int get_life_cells(int f[4][4])
-{
-    int life_cells_count = 0;
-    
-    for (int y = 0; y < 4; y++)
-    {
-	for (int x = 0; x < 4; x++)
-	{
-	    if (f[y][x] != 0)
-	    {
-		life_cells[life_cells_count].x = x;
-		life_cells[life_cells_count].y = y;
-		++life_cells_count;
-	    }
-	}
-    }
-    return life_cells_count;
-}
-
 void prepare_field(int f[4][4])
 {
     probability(f, 2);
 }
-void reverse_field(int f[4][4])
+void reverse_field(int f[4][4], int start, int end)
 {
+    int tmp_start, tmp_end;
+    tmp_start = start;
+    tmp_end = end;
     
-}
-void move_left(int f[4][4])
-{
+    for (int i = 0; i < 4; i++)
+    {
+	while (start < end)
+	{
+	    int tmp = f[i][start];
 
+	    f[i][start] = f[i][end];
+
+	    f[i][end] = tmp;
+	    start++;
+
+	    end--;
+	}
+	
+	start = tmp_start;
+	end = tmp_end;
+    }
 }
 
-int main(int argc, char* argv[])
+void move_left(int f[4][4], int r)
 {
-    srand(time(NULL));
-    prepare_field(field); 
+    r %= FIELD_W;
+    reverse_field(f, 0, r-1);
+    reverse_field(f, r, FIELD_W-1);
+    reverse_field(f, 0, FIELD_W-1);
+}
+
+void print_field(void)
+{
     for (int i = 0; i < 4; i++)
     {
 	printf("\n");
@@ -86,6 +90,15 @@ int main(int argc, char* argv[])
 	    printf("%d", field[i][j]);   	   
 	}
     }
+    printf("\n");
+}
 
+int main(int argc, char* argv[])
+{
+    srand(time(NULL));
+    prepare_field(field); 
+    print_field();
+    move_left(field, 1);
+    print_field();
     return 0;
 }
